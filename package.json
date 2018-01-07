@@ -1,0 +1,37 @@
+{
+  "name": "@zerointermittency/redis",
+  "version": "1.0.0",
+  "main": "ZIRedis.js",
+  "scripts": {
+    "test": "nyc node --max_old_space_size=4096 test/index.js",
+    "test-nyan": "REPORTER=nyan node --max_old_space_size=4096 test/index.js",
+    "benchmark": "node --max_old_space_size=4096"
+  },
+  "keywords": [
+    "redis",
+    "npm",
+    "npm-redis"
+  ],
+  "engines": ">=8.9.0",
+  "license": "MIT",
+  "homepage": "https://github.com/zerointermittency/redis",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zerointermittency/redis"
+  },
+  "bugs": {
+    "url": "https://github.com/zerointermittency/redis/issues"
+  },
+  "dependencies": {
+    "@zerointermittency/error": "^1.0.5",
+    "ioredis": "^3.1.4"
+  },
+  "devDependencies": {
+    "benchmark": "^2.1.4",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^3.5.0",
+    "nyc": "^11.3.0",
+    "wrapper-path": "^2.0.0"
+  }
+}

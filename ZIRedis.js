@@ -7,7 +7,14 @@ const Redis = require('ioredis'),
         debug: require('./core/debug.js'),
     },
     ttlRedis = 60,
-    ttlLocal = 30;
+    ttlLocal = 30,
+    timeout = (debug, self, key, ttl) => {
+        setTimeout(() => {
+            debug('delete local', key);
+            self._cache.delete(self._keys[key]);
+            delete self._keys[key];
+        }, ttl * 1000);
+    };
 
 class ZIRedis extends Redis {
     constructor(opts) {
@@ -39,11 +46,7 @@ class ZIRedis extends Redis {
         /* istanbul ignore else */
         if (!self._keys[key]) self._keys[key] = key;
         self._cache.set(self._keys[key], Promise.resolve(value));
-        setTimeout(() => {
-            debug('delete local', key);
-            self._cache.delete(self._keys[key]);
-            delete self._keys[key];
-        }, local * 1000);
+        timeout(debug, self, key, local);
         if (seconds) return self.set(key, value, 'EX', seconds);
         self.set(key, value);
     }
@@ -79,11 +82,7 @@ class ZIRedis extends Redis {
                         if (ttl === -1) ttl = ttlLocal;
                         if (local) ttl = local;
                         self._cache.set(self._keys[key], Promise.resolve(result));
-                        setTimeout(() => {
-                            debug('delete local', key);
-                            self._cache.delete(self._keys[key]);
-                            delete self._keys[key];
-                        }, ttl * 1000);
+                        timeout(debug, self, key, ttl);
                         debug('result', result);
                         res(result);
                     })
@@ -178,17 +177,14 @@ class ZIRedis extends Redis {
             self.keys(pattern)
                 .then((_keys) => {
                     keys = _keys;
-                    if (keys.length === 0)
-                        return keys;
+                    if (keys.length === 0) return keys;
                     return self.hgetallBulk(_keys);
                 })
                 .then((values) => {
-                    if (values.length === 0)
-                        return resolve(null);
+                    if (values.length === 0) return resolve(null);
                     const result = {};
                     for (let i = 0; i < keys.length; i++)
                         result[keys[i]] = values[i][1];
-
                     resolve(result);
                 })
                 .catch(reject);

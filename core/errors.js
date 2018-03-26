@@ -3,12 +3,10 @@
 const NError = require('@zerointermittency/error');
 
 class RedisError extends NError {
-
     constructor(opts) {
         opts.prefix = 'zi-redis';
         super(opts);
     }
-
 }
 
 module.exports = {

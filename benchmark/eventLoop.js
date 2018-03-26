@@ -12,7 +12,6 @@ const EventEmitter = require('events'),
     });
 
 class Client extends EventEmitter {
-
     eventTest(index, done) {
         this.emit('event', {index, done});
     }
@@ -61,7 +60,6 @@ const client = new Client();
 //     });
 // });
 
-
 // for (let i = 0; i < 20; i++) {
 //     client.eventTest(i);
 // }
@@ -77,13 +75,11 @@ client.on('event', ({index, done}) => {
 const each = require('async/each'),
     listEvents = [];
 
-for (let i = 0; i < 1000000; i++) {
+for (let i = 0; i < 1000000; i++)
     // if (listEvents.length == 0)
-        listEvents.push(i);
+    listEvents.push(i);
     // else
     //     listEvents.push((previus, done) => client.eventTest(i, done));
-}
-
 
 each(listEvents, (i, done) => client.eventTest(i, done), (err, result) => {
     console.log(err);

@@ -14,7 +14,7 @@ global._ZIRedis = require('../ZIRedis.js');
 
 path.recursive
     .files('/test/', {exclude: /test\/index.js$/g})
-    .forEach((file) => mocha.addFile(file));
+    .forEach(file => mocha.addFile(file));
 
 // Run the tests.
 mocha.run(() => process.exit());

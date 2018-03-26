@@ -14,7 +14,7 @@ const Benchmark = require('benchmark'),
         'test10': 'test10',
     };
 
-/*eslint-disable no-console */
+/* eslint-disable no-console */
 (new Benchmark.Suite)
     .add('object.entries', () => {
         const values = Object.entries(object);
@@ -31,11 +31,10 @@ const Benchmark = require('benchmark'),
         }
     })
     .add('object for...in', () => {
-        for (let key in object) {
+        for (let key in object)
             object[key];
-        }
     })
-    .on('cycle', (event) => console.log(String(event.target)))
+    .on('cycle', event => console.log(String(event.target)))
     .on('complete', function() {
         console.log('Fastest is ' + this.filter('fastest').map('name'));
         process.exit();

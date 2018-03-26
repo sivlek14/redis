@@ -43,7 +43,7 @@ describe('ZIRedis', () => {
             done();
         });
     });
-    it('nset string with expire redis and local', function(done){
+    it('nset string with expire redis and local', function(done) {
         this.timeout(4000);
         cache.nset('qwerty', 'asdf', 1, 1);
         setTimeout(() => {
@@ -53,7 +53,7 @@ describe('ZIRedis', () => {
             }).catch(done);
         }, 2000);
     });
-    it('nset string with expire local', function(done){
+    it('nset string with expire local', function(done) {
         this.timeout(4000);
         cache.nset('qwerty', 'asdf', 10, 1);
         setTimeout(() => {
@@ -83,7 +83,7 @@ describe('ZIRedis', () => {
             done();
         }).catch(done);
     });
-    it('multpiples instances of cache', function(done){
+    it('multpiples instances of cache', function(done) {
         this.timeout(50000);
         cache1.ndel('foo1');
         cache2.nget('foo1', 1)
@@ -119,7 +119,7 @@ describe('ZIRedis', () => {
                 return Promise.resolve();
             })
             .then(() => cache3.nget('foo1', 1))
-            .then((value) => new Promise((res) => {
+            .then(value => new Promise((res) => {
                 _expect(value).to.be.equal('bar1');
                 setTimeout(() => res(), 3000);
             }))

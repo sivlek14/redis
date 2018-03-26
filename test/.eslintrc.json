@@ -1,0 +1,7 @@
+{
+    "globals": {
+        "_path": true,
+        "_expect": true,
+        "_ZIRedis": true
+    }
+}

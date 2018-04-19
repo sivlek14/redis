@@ -4,6 +4,10 @@ Todos los cambios importantes son escritos aquí. El Formato esta basado en [Kee
 
 ### [Unreleased]
 
+### [1.1.0] - 2018-04-19
+#### Changed
+- Se modifica la opción de cache local, para que sea activada cuando se considere necesario
+
 ### [1.0.1] - 2018-01-07
 #### Added
 - Se utiliza [debug][debug], para visualizar la información relevante en el flujo de cache local y de redis

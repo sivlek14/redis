@@ -6,6 +6,7 @@ const ZIRedis = require('../ZIRedis.js'),
         port: 6379,
         db: 0,
         readOnly: true,
+        local: true,
     }),
     Benchmark = require('benchmark');
 

@@ -1,8 +1,8 @@
 'use strict';
 
 describe('ZIRedis', () => {
-    let cache = new _ZIRedis({port: 6379, host: '127.0.0.1', limit: 1}),
-        cache1 = new _ZIRedis({port: 6379, host: '127.0.0.1'}),
+    let cache = new _ZIRedis({port: 6379, host: '127.0.0.1', limit: 1, local: true}),
+        cache1 = new _ZIRedis({port: 6379, host: '127.0.0.1', local: true}),
         cache2 = new _ZIRedis({port: 6379, host: '127.0.0.1'}),
         cache3 = new _ZIRedis({port: 6379, host: '127.0.0.1'});
     before(() => {

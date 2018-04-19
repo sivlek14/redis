@@ -23,9 +23,12 @@ class ZIRedis extends Redis {
         if (!opts || typeof opts !== 'object' || Array.isArray(opts))
             throw core.errors.type('opts', 'object');
         super(opts);
-        this._keys = {};
-        this._limit = opts.limit || 500;
-        this._cache = new Map();
+
+        if (opts.local) {
+            this._keys = {};
+            this._limit = opts.limit || 500;
+            this._cache = new Map();
+        }
 
         defineCommands(this);
     }
@@ -39,14 +42,17 @@ class ZIRedis extends Redis {
         debug('ttlLocal', local);
         if (typeof value !== 'string')
             throw core.errors.type('value', 'string');
-        if (Object.keys(self._keys).length === self._limit) {
-            self._keys = {};
-            self._cache.clear();
-        }
         /* istanbul ignore else */
-        if (!self._keys[key]) self._keys[key] = key;
-        self._cache.set(self._keys[key], Promise.resolve(value));
-        timeout(debug, self, key, local);
+        if (self._cache) {
+            if (Object.keys(self._keys).length === self._limit) {
+                self._keys = {};
+                self._cache.clear();
+            }
+            /* istanbul ignore else */
+            if (!self._keys[key]) self._keys[key] = key;
+            self._cache.set(self._keys[key], Promise.resolve(value));
+            timeout(debug, self, key, local);
+        }
         if (seconds) return self.set(key, value, 'EX', seconds);
         self.set(key, value);
     }
@@ -55,7 +61,7 @@ class ZIRedis extends Redis {
         const self = this,
             debug = core.debug('ndel');
         debug('key', key);
-        if (self._keys[key]) {
+        if (self._cache && self._keys[key]) {
             self._cache.delete(self._keys[key]);
             delete self._keys[key];
         }
@@ -67,33 +73,38 @@ class ZIRedis extends Redis {
             debug = core.debug('nget');
         debug('key', key);
         debug('local', local);
-        if (!self._keys[key])
-            return new Promise((res, rej) => {
-                let result;
-                self.get(key)
-                    .then((value) => {
-                        if (!value) return res(value);
-                        result = value;
-                        return super.ttl(key);
-                    })
-                    .then((ttl) => {
-                        if (!ttl) return;
-                        self._keys[key] = key;
-                        if (ttl === -1) ttl = ttlLocal;
-                        if (local) ttl = local;
-                        self._cache.set(self._keys[key], Promise.resolve(result));
-                        timeout(debug, self, key, ttl);
-                        debug('result', result);
-                        res(result);
-                    })
-                    .catch(rej);
-            });
+        if (self._cache) {
+            if (!self._keys[key])
+                return new Promise((res, rej) => {
+                    let result;
+                    self.get(key)
+                        .then((value) => {
+                            if (!value) return res(value);
+                            result = value;
+                            return super.ttl(key);
+                        })
+                        .then((ttl) => {
+                            if (!ttl) return;
+                            self._keys[key] = key;
+                            /* istanbul ignore next */
+                            if (ttl === -1) ttl = ttlLocal;
+                            /* istanbul ignore next */
+                            if (local) ttl = local;
+                            self._cache.set(self._keys[key], Promise.resolve(result));
+                            timeout(debug, self, key, ttl);
+                            debug('result', result);
+                            res(result);
+                        })
+                        .catch(rej);
+                });
 
-        return self._cache.get(self._keys[key])
-            .then((value) => {
-                debug('result', value);
-                return value;
-            });
+            return self._cache.get(self._keys[key])
+                .then((value) => {
+                    debug('result', value);
+                    return value;
+                });
+        } else
+            return self.get(key);
     }
 
     deletePattern(pattern) {

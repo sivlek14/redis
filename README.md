@@ -41,6 +41,7 @@ let redis = new ZIRedis({port: 6379, host: '127.0.0.1'});
 - options (Object):
     - host \(*String*\) **required**: identifica donde esta el server de redis, default: localhost
     - port \(*Number*\) **required**: puerto al cual se conecta redis, default: 6379
+    - local \(*Boolean*\): activa el cache local, para mantener en memoria una copia del valor guardado, default: false
 
 > Para mayor informacion sobre todos los campos aceptados, leer **[new redis][newRedis]**.
 
